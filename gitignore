@@ -1,0 +1,11 @@
+*.pyc
+.tm_properties
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.rej
+*.swp
+*~
+.DS_Store
+.bundle/bin/
+vendor/ruby/
+vendor/*/vendor/ruby/

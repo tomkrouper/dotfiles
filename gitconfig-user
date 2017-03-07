@@ -1,0 +1,8 @@
+[user]
+	# Name used in commit messages.
+	name = Tom Krouper
+	# Email used in commit messages.
+	email = tomkrouper@github.com
+[github]
+	# GitHub username for command-line tools.
+	user = tomkrouper
