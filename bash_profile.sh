@@ -1,6 +1,16 @@
 # load shared shell configuration
 source ~/.shprofile
 
+# check if this is a login and/or interactive shell
+[ "$0" = "-bash" ] && export LOGIN_BASH="1"
+echo "$-" | grep -q "i" && export INTERACTIVE_BASH="1"
+
+# run bashrc if this is a login, interactive shell
+if [ -n "$LOGIN_BASH" ] && [ -n "$INTERACTIVE_BASH" ]
+then
+  source ~/.bashrc
+fi
+
 # Set HOST for ZSH compatibility
 export HOST=$HOSTNAME
 
@@ -19,19 +29,22 @@ shopt -s cdspell
 
 # Bash completion
 [ -f /etc/profile.d/bash-completion ] && source /etc/profile.d/bash-completion
-[ -f "$BREW_PREFIX/etc/bash_completion" ] && source "$BREW_PREFIX/etc/bash_completion" >/dev/null
+[ -f "$HOMEBREW_PREFIX/etc/bash_completion" ] && source "$HOMEBREW_PREFIX/etc/bash_completion" >/dev/null
 
-# fix delete key on OSX
-[ "$OSX" ] && bind '"\e[3~" delete-char'
+# Colorful prompt
+if [ "$USER" = "root" ]
+then
+  PS1='\[\033[01;35m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+elif [ -n "${SSH_CONNECTION}" ]
+then
+  PS1='\[\033[01;36m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+else
+  PS1='\[\033[01;32m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+fi
 
-# git completion & prompt
-[ -f /usr/local/etc/bash_completion.d/git-completion.bash ] && source /usr/local/etc/bash_completion.d/git-completion.bash
-[ -f /usr/local/etc/bash_completion.d/git-prompt.sh ] && source /usr/local/etc/bash_completion.d/git-prompt.sh
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWCOLORHINTS=1
-export PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
-
-eval "$(rbenv init -)"
-eval "$(nodenv init -)"
-
-ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh-auth-sock.$HOSTNAME"
+# only set key bindings on interactive shell
+if [ -n "$INTERACTIVE_BASH" ]
+then
+  # fix delete key on macOS
+  [ "$MACOS" ] && bind '"\e[3~" delete-char'
+fi
