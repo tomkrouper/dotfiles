@@ -46,15 +46,18 @@ quiet_which() {
   which "$1" &>/dev/null
 }
 
+add_to_path_end "/sbin"
 add_to_path_start "/usr/local/bin"
 add_to_path_start "/usr/local/sbin"
+add_to_path_start "$HOME/Homebrew/bin"
+add_to_path_start "$HOME/Homebrew/sbin"
 
 # Run rbenv if it exists
 quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
 
 # Aliases
 alias mkdir="mkdir -vp"
-alias df="df -h"
+alias df="df -H"
 alias rm="rm -iv"
 alias mv="mv -iv"
 alias cp="cp -irv"
@@ -66,7 +69,7 @@ alias sha256="shasum -a 256"
 alias ls="ls -F"
 
 # Platform-specific stuff
-if [ "$OSX" ]
+if [ "$MACOS" ]
 then
   export GREP_OPTIONS="--color=auto"
   export CLICOLOR=1
@@ -110,6 +113,11 @@ json() {
 receipt() {
   [ -n "$1" ] || return
   json "$HOMEBREW_PREFIX/opt/$1/INSTALL_RECEIPT.json"
+}
+
+# Move files to the Trash folder
+trash() {
+  mv "$@" "$HOME/.Trash/"
 }
 
 # Look in ./bin but do it last to avoid weird `which` results.
