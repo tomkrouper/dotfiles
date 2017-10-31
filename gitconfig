@@ -84,7 +84,7 @@
 	p = pull
 	s = status --short --branch
 [diff]
-	# Use the OS X graphical three-way merge tool for graphical diffs.
+	# Use the macOS graphical three-way merge tool for graphical diffs.
 	tool = opendiff
 	# Use the slower but better patience diff algorithm
 	algorithm = patience
@@ -93,10 +93,10 @@
 [diff "xml"]
 	textconv = xmllint --format --recover
 [difftool "opendiff"]
-	# Set the OS X opendiff command name.
+	# Set the macOS opendiff command name.
 	path = opendiff
 [merge]
-	# Use the OS X graphical three-way merge tool for graphical merges.
+	# Use the macOS graphical three-way merge tool for graphical merges.
 	tool = opendiff
 [mergetool]
 	# Don't prompt before opening the merge tool.
@@ -130,7 +130,7 @@
 	# Enable this in networks where https:// has issues.
 	#insteadOf = https://github.com/
 [credential]
-	# Use OS X Keychain to store HTTP passwords.
+	# Use macOS Keychain to store HTTP passwords.
 	helper = osxkeychain
 [hub]
 	protocol = https

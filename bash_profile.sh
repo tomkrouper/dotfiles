@@ -29,7 +29,18 @@ shopt -s cdspell
 
 # Bash completion
 [ -f /etc/profile.d/bash-completion ] && source /etc/profile.d/bash-completion
-[ -f "$BREW_PREFIX/etc/bash_completion" ] && source "$BREW_PREFIX/etc/bash_completion" >/dev/null
+[ -f "$HOMEBREW_PREFIX/etc/bash_completion" ] && source "$HOMEBREW_PREFIX/etc/bash_completion" >/dev/null
+
+# Colorful prompt
+if [ "$USER" = "root" ]
+then
+  PS1='\[\033[01;35m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+elif [ -n "${SSH_CONNECTION}" ]
+then
+  PS1='\[\033[01;36m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+else
+  PS1='\[\033[01;32m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+fi
 
 # only set key bindings on interactive shell
 if [ -n "$INTERACTIVE_BASH" ]

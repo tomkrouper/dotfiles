@@ -1,5 +1,5 @@
 " Switch syntax highlighting on
-colo slate
+:color slate
 syntax on
 
 " always show ruler at bottom
@@ -22,6 +22,11 @@ if has("autocmd")
   filetype indent on
   filetype plugin on
 endif
+set list
+set expandtab
+set shiftwidth=2
+set softtabstop=2
+set tabstop=2
 
 " whitespace
 if has("multi_byte")
