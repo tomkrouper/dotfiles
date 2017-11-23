@@ -31,15 +31,34 @@ shopt -s cdspell
 [ -f /etc/profile.d/bash-completion ] && source /etc/profile.d/bash-completion
 [ -f "$HOMEBREW_PREFIX/etc/bash_completion" ] && source "$HOMEBREW_PREFIX/etc/bash_completion" >/dev/null
 
+# Git completion
+if [ -f $(brew --prefix)/etc/bash_completion.d/git-completion.bash ] ; then
+  . $(brew --prefix)/etc/bash_completion.d/git-completion.bash
+elif [ -f /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash ]; then
+  . /Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash
+fi
+
+# Git prompt
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+export GIT_PS1_SHOWUPSTREAM="auto"
+export GIT_PS1_SHOWCOLORHINTS=1
+if [ -f $(brew --prefix)/etc/bash_completion.d/git-prompt.sh ]; then
+  . $(brew --prefix)/etc/bash_completion.d/git-prompt.sh
+elif [ -f /Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh ]; then
+  . /Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh
+fi
+
 # Colorful prompt
 if [ "$USER" = "root" ]
 then
-  PS1='\[\033[01;35m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+  PS1='\[\033[01;35m\]\h\[\033[01;34m\] \W$(__git_ps1 " (%s)")#\[\033[00m\] '
 elif [ -n "${SSH_CONNECTION}" ]
 then
-  PS1='\[\033[01;36m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+  PS1='\[\033[01;36m\]\h\[\033[01;34m\] \W$(__git_ps1 " (%s)")$\[\033[00m\] '
 else
-  PS1='\[\033[01;32m\]\h\[\033[01;34m\] \W #\[\033[00m\] '
+  PS1='\[\033[01;32m\]\h\[\033[01;34m\] \W$(__git_ps1 " (%s)")$\[\033[00m\] '
 fi
 
 # only set key bindings on interactive shell

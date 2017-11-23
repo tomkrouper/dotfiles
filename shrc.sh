@@ -67,11 +67,13 @@ alias less="less -FSXr"
 alias rsync="rsync --partial --progress --human-readable --compress"
 alias sha256="shasum -a 256"
 alias ls="ls -F"
+alias ll="ls -l"
 
 # Platform-specific stuff
 if [ "$MACOS" ]
 then
   export GREP_OPTIONS="--color=auto"
+  export LSCOLORS=Exfxcxdxbxegedabagacad
   export CLICOLOR=1
   export GIT_PAGER='less -FSXr'
 
@@ -120,5 +122,10 @@ trash() {
   mv "$@" "$HOME/.Trash/"
 }
 
+force_add_to_path_start "/usr/local/opt/mysql@5.6/bin"
+
 # Look in ./bin but do it last to avoid weird `which` results.
 force_add_to_path_start "bin"
+
+# Setup rbenv
+eval "$(rbenv init -)"
