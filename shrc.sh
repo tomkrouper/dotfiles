@@ -73,7 +73,7 @@ alias ll="ls -l"
 if [ "$MACOS" ]
 then
   export GREP_OPTIONS="--color=auto"
-  export LSCOLORS=Exfxcxdxbxegedabagacad
+  export LSCOLORS=cxFxcxdxBxegedabagacHe
   export CLICOLOR=1
   export GIT_PAGER='less -FSXr'
 
