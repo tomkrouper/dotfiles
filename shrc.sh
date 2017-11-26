@@ -122,7 +122,10 @@ trash() {
   mv "$@" "$HOME/.Trash/"
 }
 
-force_add_to_path_start "/usr/local/opt/mysql@5.6/bin"
+# MySQL@5.6 into path.
+if [ -d "/usr/local/opt/mysql@5.6/bin" ]; then
+  force_add_to_path_start "/usr/local/opt/mysql@5.6/bin"
+fi
 
 # Look in ./bin but do it last to avoid weird `which` results.
 force_add_to_path_start "bin"
