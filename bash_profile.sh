@@ -11,6 +11,19 @@ then
   source ~/.bashrc
 fi
 
+# Setup screencapture
+if [ "$MACOS" ]; then
+  if [ ! -d "$HOME/Desktop/Screenshots" ]; then
+    mkdir -p "$HOME/Desktop/Screenshots"
+  fi
+  screencapture_location=$(defaults read com.apple.screencapture location 2> /dev/null)
+  if [ $? -eq 1 ]; then
+    defaults write com.apple.screencapture location "$HOME/Desktop/Screenshots"
+  elif [ $screencapture_location != "$HOME/Desktop/Screenshots" ]; then
+    defaults write com.apple.screencapture location "$HOME/Desktop/Screenshots"
+  fi
+fi
+
 # Set HOST for ZSH compatibility
 export HOST=$HOSTNAME
 
