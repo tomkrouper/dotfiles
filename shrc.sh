@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # shellcheck disable=SC2155
 
 # Colourful manpages
@@ -53,7 +53,11 @@ add_to_path_start "$HOME/Homebrew/bin"
 add_to_path_start "$HOME/Homebrew/sbin"
 
 # Run rbenv if it exists
-quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
+if quiet_which rbenv
+then
+  add_to_path_start "$(rbenv root)/shims"
+  eval "$(rbenv init -)"
+fi
 
 # Aliases
 alias mkdir="mkdir -vp"
@@ -66,8 +70,13 @@ alias make="nice make"
 alias less="less -FSXr"
 alias rsync="rsync --partial --progress --human-readable --compress"
 alias sha256="shasum -a 256"
-alias ls="ls -F"
-alias ll="ls -l"
+if quiet_which exa; then
+  alias ls="exa -Fg"
+  alias ll="exa -Fgl --time-style=long-iso"
+else
+  alias ls="ls -F"
+  alias ll="ls -l"
+fi
 
 # Platform-specific stuff
 if [ "$MACOS" ]
@@ -130,5 +139,3 @@ fi
 # Look in ./bin but do it last to avoid weird `which` results.
 force_add_to_path_start "bin"
 
-# Setup rbenv
-eval "$(rbenv init -)"
