@@ -40,6 +40,7 @@ shopt -s cmdhist
 # Correct minor directory changing spelling mistakes
 shopt -s cdspell
 
+if [ "$MACOS" ]; then
 # Bash completion
 [ -f /etc/profile.d/bash-completion ] && source /etc/profile.d/bash-completion
 [ -f "$HOMEBREW_PREFIX/etc/bash_completion" ] && source "$HOMEBREW_PREFIX/etc/bash_completion" >/dev/null
@@ -72,6 +73,8 @@ then
   PS1='\[\033[01;36m\]\h\[\033[01;34m\] \W$(__git_ps1 " (%s)")$\[\033[00m\] '
 else
   PS1='\[\033[01;32m\]\h\[\033[01;34m\] \W$(__git_ps1 " (%s)")$\[\033[00m\] '
+fi
+# End MACOS
 fi
 
 # only set key bindings on interactive shell

@@ -52,6 +52,9 @@ add_to_path_start "/usr/local/sbin"
 add_to_path_start "$HOME/Homebrew/bin"
 add_to_path_start "$HOME/Homebrew/sbin"
 
+export GOPATH="$HOME/go"
+add_to_path_end "$GOPATH/bin"
+
 # Run rbenv if it exists
 if quiet_which rbenv
 then
@@ -72,7 +75,7 @@ alias rsync="rsync --partial --progress --human-readable --compress"
 alias sha256="shasum -a 256"
 if quiet_which exa; then
   alias ls="exa -Fg"
-  alias ll="exa -Fgl --time-style=long-iso"
+  alias ll="exa -Fgl --time-style=long-iso --git"
 else
   alias ls="ls -F"
   alias ll="ls -l"

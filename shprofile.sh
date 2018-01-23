@@ -30,5 +30,5 @@ then
   export BUNDLE_JOBS="$CPUCOUNT"
 fi
 
-[ -s ~/.lastpwd ] && [ "$PWD" = "$HOME" ] && \
-  builtin cd "$(cat ~/.lastpwd)" 2>/dev/null
+#[ -s ~/.lastpwd ] && [ "$PWD" = "$HOME" ] && \
+#  builtin cd "$(cat ~/.lastpwd)" 2>/dev/null
