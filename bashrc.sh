@@ -9,6 +9,6 @@ source ~/.shrc
 
 # History
 export HISTFILE=~/.bash_history
-export HISTCONTROL=ignoredups
+export HISTCONTROL=ignoreboth
 export PROMPT_COMMAND='history -a'
 export HISTIGNORE="&:ls:[bf]g:exit"
