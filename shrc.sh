@@ -54,13 +54,12 @@ add_to_path_start "$HOME/Homebrew/sbin"
 
 export GOPATH="$HOME/go"
 add_to_path_end "$GOPATH/bin"
+export GOROOT=/usr/local/opt/go/libexec
+add_to_path_start "/usr/local/opt/go/libexec/bin"
+export GODEBUG=netdns=go
 
 # Run rbenv if it exists
-if quiet_which rbenv
-then
-  add_to_path_start "$(rbenv root)/shims"
-  eval "$(rbenv init -)"
-fi
+quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
 
 # Aliases
 alias mkdir="mkdir -vp"
@@ -73,6 +72,42 @@ alias make="nice make"
 alias less="less -FSXr"
 alias rsync="rsync --partial --progress --human-readable --compress"
 alias sha256="shasum -a 256"
+
+# Platform-specific stuff
+if quiet_which brew
+then
+  export HOMEBREW_PREFIX="$(brew --prefix)"
+  export HOMEBREW_REPOSITORY="$(brew --repo)"
+  export HOMEBREW_AUTO_UPDATE_SECS=3600
+  export HOMEBREW_BINTRAY_USER="$(git config bintray.username)"
+  export HOMEBREW_UPGRADE_CLEANUP=1
+
+  alias hbc='cd $HOMEBREW_REPOSITORY/Library/Taps/homebrew/homebrew-core'
+
+  # Output whether the dependencies for a Homebrew package are bottled.
+  brew_bottled_deps() {
+    for DEP in "$@"; do
+      echo "$DEP deps:"
+      brew deps "$DEP" | xargs brew info | grep stable
+      [ "$#" -ne 1 ] && echo
+    done
+  }
+
+  # Output the most popular unbottled Homebrew packages
+  brew_popular_unbottled() {
+    brew deps --all |
+      awk '{ gsub(":? ", "\n") } 1' |
+      sort |
+      uniq -c |
+      sort |
+      tail -n 500 |
+      awk '{print $2}' |
+      xargs brew info |
+      grep stable |
+      grep -v bottled
+  }
+fi
+
 if quiet_which exa; then
   alias ls="exa -Fg"
   alias ll="exa -Fgl --time-style=long-iso --git"
@@ -87,13 +122,21 @@ then
   export GREP_OPTIONS="--color=auto"
   export LSCOLORS=cxFxcxdxBxegedabagacHe
   export CLICOLOR=1
-  export GIT_PAGER='less -FSXr'
 
+  add_to_path_end "$HOMEBREW_PREFIX/opt/git/share/git-core/contrib/diff-highlight"
+  if quiet_which diff-highlight
+  then
+    # shellcheck disable=SC2016
+    export GIT_PAGER='diff-highlight | less -+$LESS -RX'
+  else
+    # shellcheck disable=SC2016
+    export GIT_PAGER='less -+$LESS -RX'
+  fi
   add_to_path_end /Applications/Xcode.app/Contents/Developer/usr/bin
   add_to_path_end /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
   alias locate="mdfind -name"
-  alias cpwd="pwd | tr -d '\n' | pbcopy"
+  alias cpwd="pwd | tr -d '\\n' | pbcopy"
 
 elif [ "$LINUX" ]
 then
@@ -117,6 +160,10 @@ cd() {
   ls
 }
 
+cat() {
+  /bin/cat "$@" | /usr/local/bin/sed -e "s/password=.*/password=hunter2/" || return
+}
+
 # Pretty-print JSON files
 json() {
   [ -n "$1" ] || return
@@ -134,11 +181,5 @@ trash() {
   mv "$@" "$HOME/.Trash/"
 }
 
-# MySQL@5.6 into path.
-if [ -d "/usr/local/opt/mysql@5.6/bin" ]; then
-  force_add_to_path_start "/usr/local/opt/mysql@5.6/bin"
-fi
-
 # Look in ./bin but do it last to avoid weird `which` results.
 force_add_to_path_start "bin"
-
