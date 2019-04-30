@@ -43,6 +43,7 @@ force_add_to_path_start() {
 }
 
 quiet_which() {
+# shellcheck disable=SC2230
   which "$1" &>/dev/null
 }
 
@@ -57,6 +58,9 @@ add_to_path_end "$GOPATH/bin"
 export GOROOT=/usr/local/opt/go/libexec
 add_to_path_start "/usr/local/opt/go/libexec/bin"
 export GODEBUG=netdns=go
+
+add_to_path_end "$(brew --prefix mysql@5.7)/bin"
+add_to_path_start "$HOME/bin"
 
 # Run rbenv if it exists
 quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
@@ -80,7 +84,6 @@ then
   export HOMEBREW_REPOSITORY="$(brew --repo)"
   export HOMEBREW_AUTO_UPDATE_SECS=3600
   export HOMEBREW_BINTRAY_USER="$(git config bintray.username)"
-  export HOMEBREW_UPGRADE_CLEANUP=1
 
   alias hbc='cd $HOMEBREW_REPOSITORY/Library/Taps/homebrew/homebrew-core'
 
@@ -127,10 +130,10 @@ then
   if quiet_which diff-highlight
   then
     # shellcheck disable=SC2016
-    export GIT_PAGER='diff-highlight | less -+$LESS -RX'
+    export GIT_PAGER='diff-highlight | less -+$LESS -FRX'
   else
     # shellcheck disable=SC2016
-    export GIT_PAGER='less -+$LESS -RX'
+    export GIT_PAGER='less -+$LESS -FRX'
   fi
   add_to_path_end /Applications/Xcode.app/Contents/Developer/usr/bin
   add_to_path_end /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -179,6 +182,48 @@ receipt() {
 # Move files to the Trash folder
 trash() {
   mv "$@" "$HOME/.Trash/"
+}
+
+existing-pr() {
+  local branch
+  if branch="$(git rev-parse --symbolic-full-name '@{upstream}' 2>/dev/null)"; then
+    branch="${branch#refs/remotes/}"
+    branch="${branch#*/}"
+  else
+    branch="$(git rev-parse --symbolic-full-name HEAD)"
+    branch="${branch#refs/heads/}"
+  fi
+
+# shellcheck disable=SC2016
+  hub api -t graphql -fbranch="$branch" -fquery='
+    query($branch: String!) {
+      repository(owner: "{owner}", name: "{repo}") {
+        pullRequests(headRefName: $branch, states: OPEN, first: 10) {
+          edges {
+            node {
+              url
+              repository {
+                owner {
+                  login
+                }
+              }
+              headRepository {
+                owner {
+                  login
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ' | group_edges 3 | while read -r url base_owner head_owner; do
+    [ "$base_owner" != "$head_owner" ] || printf '%s\n' "$url"
+  done | head -1
+}
+
+group_edges() {
+  grep -F '[' | cut -f2 | xargs -L"${1?}"
 }
 
 # Look in ./bin but do it last to avoid weird `which` results.

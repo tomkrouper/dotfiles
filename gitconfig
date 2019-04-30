@@ -22,6 +22,7 @@
 	attributesfile = ~/.gitattributes
 	# Don't prompt for commit messages for merge commits.
 	mergeoptions = --no-edit
+	pager = less -+F -+X
 [help]
   # Autocorrect mistyped commands.
 	autocorrect = 1
@@ -143,3 +144,6 @@
 [commit]
 	# Show the diff as a comment in the commit message template.
 	verbose = true
+[user]
+	name = Tom Krouper
+	email = tomkrouper@github.com

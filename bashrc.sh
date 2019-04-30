@@ -1,3 +1,4 @@
+#!/bin/bash
 # check if this is a login shell
 [ "$0" = "-bash" ] && export LOGIN_BASH="1"
 
@@ -12,3 +13,7 @@ export HISTFILE=~/.bash_history
 export HISTCONTROL=ignoreboth
 export PROMPT_COMMAND='history -a'
 export HISTIGNORE="&:ls:[bf]g:exit"
+
+export VAULT_URL="none"
+
+[[ $- = *i* ]] && source ~/github.com/nojhan/liquidprompt/liquidprompt
