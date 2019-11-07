@@ -22,7 +22,7 @@
 	attributesfile = ~/.gitattributes
 	# Don't prompt for commit messages for merge commits.
 	mergeoptions = --no-edit
-	pager = less -+F -+X
+	pager = less -F -X
 [help]
   # Autocorrect mistyped commands.
 	autocorrect = 1

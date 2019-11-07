@@ -1,0 +1,16 @@
+Host *
+ User tomkrouper
+ ForwardAgent yes
+ AddKeysToAgent yes
+ UseKeychain yes
+ ServerAliveInterval 60
+
+Host github.com *.github.com *.github.net *.githubapp.com
+ User tomkrouper
+ ForwardAgent yes
+
+Host shell
+ hostname shell.service.cp1-iad.github.net
+ ForwardAgent yes
+ ProxyJump bastion.githubapp.com
+
