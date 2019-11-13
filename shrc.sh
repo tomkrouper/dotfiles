@@ -163,10 +163,6 @@ cd() {
   ls
 }
 
-cat() {
-  /bin/cat "$@" | /usr/local/bin/sed -e "s/password=.*/password=hunter2/" || return
-}
-
 # Pretty-print JSON files
 json() {
   [ -n "$1" ] || return
