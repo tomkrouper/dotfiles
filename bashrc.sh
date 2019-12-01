@@ -16,4 +16,4 @@ export HISTIGNORE="&:ls:[bf]g:exit"
 
 export VAULT_URL="none"
 
-[[ $- = *i* ]] && source ~/github.com/nojhan/liquidprompt/liquidprompt
+[[ $- = *i* ]] && source ~/Documents/GitHub/liquidprompt/liquidprompt

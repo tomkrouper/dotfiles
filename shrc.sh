@@ -180,47 +180,5 @@ trash() {
   mv "$@" "$HOME/.Trash/"
 }
 
-existing-pr() {
-  local branch
-  if branch="$(git rev-parse --symbolic-full-name '@{upstream}' 2>/dev/null)"; then
-    branch="${branch#refs/remotes/}"
-    branch="${branch#*/}"
-  else
-    branch="$(git rev-parse --symbolic-full-name HEAD)"
-    branch="${branch#refs/heads/}"
-  fi
-
-# shellcheck disable=SC2016
-  hub api -t graphql -fbranch="$branch" -fquery='
-    query($branch: String!) {
-      repository(owner: "{owner}", name: "{repo}") {
-        pullRequests(headRefName: $branch, states: OPEN, first: 10) {
-          edges {
-            node {
-              url
-              repository {
-                owner {
-                  login
-                }
-              }
-              headRepository {
-                owner {
-                  login
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  ' | group_edges 3 | while read -r url base_owner head_owner; do
-    [ "$base_owner" != "$head_owner" ] || printf '%s\n' "$url"
-  done | head -1
-}
-
-group_edges() {
-  grep -F '[' | cut -f2 | xargs -L"${1?}"
-}
-
 # Look in ./bin but do it last to avoid weird `which` results.
 force_add_to_path_start "bin"
