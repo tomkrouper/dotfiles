@@ -37,7 +37,19 @@ bindkey "^v" history-beginning-search-forward
 
 source /usr/local/share/antigen/antigen.zsh
 
-antigen bundle nojhan/liquidprompt
-antigen bundle git
+# Load the oh-my-zsh's library.
+antigen use oh-my-zsh
+
+antigen bundles <<EOBUNDLES
+brew
+git
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-completions
+zsh-users/zsh-syntax-highlighting
+EOBUNDLES
+
+antigen theme nojhan/liquidprompt
+
+# Tell Antigen that you're done.
 antigen apply
 
