@@ -64,6 +64,7 @@ add_to_path_start "$HOME/bin"
 
 # Run rbenv if it exists
 quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
+quiet_which rbenv && eval "$(rbenv init -)"
 
 # Aliases
 alias mkdir="mkdir -vp"
