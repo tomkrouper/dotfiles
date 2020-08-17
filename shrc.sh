@@ -66,6 +66,8 @@ add_to_path_start "$HOME/bin"
 quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
 quiet_which rbenv && eval "$(rbenv init -)"
 
+quiet_which nodenv && eval "$(nodenv init -)"
+
 # Aliases
 alias mkdir="mkdir -vp"
 alias df="df -H"
@@ -123,7 +125,6 @@ fi
 # Platform-specific stuff
 if [ "$MACOS" ]
 then
-  export GREP_OPTIONS="--color=auto"
   export LSCOLORS=cxFxcxdxBxegedabagacHe
   export CLICOLOR=1
 

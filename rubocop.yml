@@ -1,9 +1,12 @@
+AllCops:
+  NewCops: enable
+
 # To allow #/ or #: comments.
 Layout/LeadingCommentSpace:
   Enabled: false
 
 # Too much noise.
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 
 # Too much noise.
@@ -26,8 +29,5 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
-# I prefer this approach.
-Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: consistent_comma
-Style/TrailingCommaInHashLiteral:
-  EnforcedStyleForMultiline: consistent_comma
+Metrics/MethodLength:
+  Max: 25
