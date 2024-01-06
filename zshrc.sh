@@ -1,58 +1,47 @@
-# check if this is a login shell
-[ "$0" = "-zsh" ] && export LOGIN_ZSH=1
+# shellcheck disable=SC2148,SC1090
 
-# run zprofile if this is not a login shell
-[ -n "$LOGIN_ZSH" ] && source ~/.zprofile
+# powerlevel10k
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 
-# load shared shell configuration
-source ~/.shrc
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# History file
-export HISTFILE=~/.zsh_history
+# zsh auto-update behavior
+zstyle ':omz:update' mode auto      # update automatically without asking
 
-# Don't show duplicate history entires
-setopt hist_find_no_dups
+HIST_STAMPS="yyyy-mm-dd"
 
-# Remove unnecessary blanks from history
-setopt hist_reduce_blanks
+plugins=(git fzf)
 
-# Share history between instances
-setopt share_history
+source $ZSH/oh-my-zsh.sh
 
-# Don't hang up background jobs
-setopt no_hup
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# use emacs bindings even with vim as EDITOR
-bindkey -e
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# fix backspace on Debian
-[ -n "$LINUX" ] && bindkey "^?" backward-delete-char
+source ~/.zprofile # always source zprofile regardless of whether this is/isn't a login shell
+source ~/.shrc # load shared shell configuration
+export HISTFILE=~/.zsh_history # History file
+setopt hist_find_no_dups # Don't show duplicate history entires
+setopt hist_reduce_blanks # Remove unnecessary blanks from history
+setopt share_history # Share history between instances
+setopt no_hup # Don't hang up background jobs
+setopt correct # autocorrect command and parameter spelling
+setopt correctall
+# bindkey -e # use emacs bindings even with vim as EDITOR
+bindkey '\e[3~' delete-char # fix delete key on macOS
 
-# fix delete key on macOS
-[ -n "$MACOS" ] && bindkey '\e[3~' delete-char
+bindkey "^u" history-beginning-search-backward # alternate mappings for Ctrl-U to search the history
+bindkey "^v" history-beginning-search-forward # alternate mappings for Ctrl-V to search the history
 
-# alternate mappings for Ctrl-U/V to search the history
-bindkey "^u" history-beginning-search-backward
-bindkey "^v" history-beginning-search-forward
+ZSH_AUTOSUGGESTIONS="$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" # enable autosuggestions
+[ -f "$ZSH_AUTOSUGGESTIONS" ] && source "$ZSH_AUTOSUGGESTIONS"
 
-source /usr/local/share/antigen/antigen.zsh
+which direnv &>/dev/null && eval "$(direnv hook zsh)" # enable direnv (if installed)
 
-# Load the oh-my-zsh's library.
-antigen use oh-my-zsh
-
-antigen bundles <<EOBUNDLES
-brew
-git
-zsh-users/zsh-autosuggestions
-zsh-users/zsh-completions
-zsh-users/zsh-syntax-highlighting
-EOBUNDLES
-
-antigen theme nojhan/liquidprompt
-
-# Tell Antigen that you're done.
-antigen apply
-
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
+# to avoid non-zero exit code
+true

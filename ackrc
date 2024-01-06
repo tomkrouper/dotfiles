@@ -1,5 +1,0 @@
---type-set=txt=.txt
---type-set=markdown=.md,.markdown
---ignore-dir=.catalog-diff-cache
---ignore-dir=.tmp
---ignore-dir=vendor
