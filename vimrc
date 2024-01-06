@@ -1,54 +1,118 @@
-" Switch syntax highlighting on
-:color slate
+" Disable compatibility with vi which can cause unexpected issues.
+set nocompatible
+
+" Enable type file detection. Vim will be able to try to detect the type of file in use.
+filetype on
+
+" Enable plugins and load plugin for the detected file type.
+filetype plugin on
+
+" Load an indent file for the detected file type.
+filetype indent on
+
+" Turn syntax highlighting on.
 syntax on
+:color slate
+
+" Add numbers to each line on the left-hand side.
+set number
 
 " always show ruler at bottom
 set ruler
 
-" don't make foo~ files
-set nobackup
-
-" searching
-set ignorecase
-set smartcase
-
-" indentation
-set autoindent
-set smarttab
-if has("autocmd")
-  filetype on
-  filetype indent on
-  filetype plugin on
-endif
-set list
-set expandtab
-set shiftwidth=2
-set softtabstop=2
-set tabstop=2
-
-" whitespace
-if has("multi_byte")
-  set encoding=utf-8
-  set list listchars=tab:»·,trail:·
-else
-  set list listchars=tab:>-,trail:.
-endif
-
 " disable mouse integration
 set mouse=
 
-" Setup pathogen
-execute pathogen#infect()
+" Highlight cursor line underneath the cursor horizontally.
+set cursorline
+hi CursorLine ctermbg=236
 
-" Syntastic Settings
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" Highlight cursor line underneath the cursor vertically.
+set cursorcolumn
+hi CursorColumn ctermbg=236
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height = 5
-let g:syntastic_puppet_puppetlint_args = "--no-80chars-check --no-documentation-check"
-let g:syntastic_sh_shellcheck_args = "--exclude=SC1090,SC1091,SC2068,SC2086"
+" Set shift width to 2 spaces.
+set shiftwidth=2
+
+" Set tab width to 2 columns.
+set tabstop=2
+
+" Set tab width for tab and backspace
+set softtabstop=2
+
+" Use space characters instead of tabs.
+set expandtab
+
+" Do not save backup files.
+set nobackup
+
+" Do not let cursor scroll below or above N number of lines when scrolling.
+set scrolloff=5
+
+" Do not wrap lines. Allow long lines to extend as far as the line goes.
+set nowrap
+
+" While searching though a file incrementally highlight matching characters as you type.
+set incsearch
+
+" Ignore capital letters during search.
+set ignorecase
+
+" Override the ignorecase option if searching for capital letters.
+" This will allow you to search specifically for capital letters.
+set smartcase
+
+" Show partial command you type in the last line of the screen.
+set showcmd
+
+" Show the mode you are on the last line.
+set showmode
+
+" Show matching words during a search.
+set showmatch
+
+" Use highlighting when doing a search.
+set hlsearch
+
+" Set the commands to save in history default number is 20.
+set history=1000
+
+" Whitespace ------------------------------------------------------------ {{{
+
+if has("multi_byte")
+  set encoding=utf-8
+  "set listchars=tab:»·,trail:·
+  set listchars=tab:⇤–⇥,space:·,trail:·,precedes:⇠,extends:⇢,nbsp:×
+else
+  set listchars=tab:>-,trail:.
+endif
+set list
+
+" }}}
+
+
+" STATUS LINE ------------------------------------------------------------ {{{
+
+" Clear status line when vimrc is reloaded.
+set statusline=
+
+" Status line left side.
+set statusline+=\ %F\ %M\ %Y\ %R
+
+" Use a divider to separate the left side from the right side.
+set statusline+=%=
+
+" Status line right side.
+set statusline+=\ ascii:\ %b\ hex:\ 0x%B\ row:\ %l\ col:\ %c\ percent:\ %p%%
+
+" Show the status on the second to last line.
+set laststatus=2
+
+" }}}
+
+" vim-plug
+call plug#begin()
+" Make sure you use single quotes
+Plug 'dense-analysis/ale'
+
+call plug#end()

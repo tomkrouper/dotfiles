@@ -10,177 +10,110 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-# Set to avoid `env` output from changing console colour
-export LESS_TERMEND=$'\E[0m'
+export LESS_TERMEND=$'\E[0m' # Set to avoid `env` output from changing console colour
 
-# Print field by number
-field() {
-  ruby -ane "puts \$F[$1]"
-}
+# Setup PATH
 
-# Setup paths
+# Remove from anywhere in PATH
 remove_from_path() {
-  [ -d "$1" ] || return
-  # Doesn't work for first item in the PATH but I don't care.
-  export PATH=${PATH//:$1/}
+  [[ -d "$1" ]] || return
+  PATHSUB=":${PATH}:"
+  PATHSUB=${PATHSUB//:$1:/:}
+  PATHSUB=${PATHSUB#:}
+  PATHSUB=${PATHSUB%:}
+  export PATH="${PATHSUB}"
 }
 
+# Add to the start of PATH if it exists
 add_to_path_start() {
-  [ -d "$1" ] || return
+  [[ -d "$1" ]] || return
   remove_from_path "$1"
-  export PATH="$1:$PATH"
+  export PATH="$1:${PATH}"
 }
 
+# Add to the end of PATH if it exists
 add_to_path_end() {
-  [ -d "$1" ] || return
+  [[ -d "$1" ]] || return
   remove_from_path "$1"
-  export PATH="$PATH:$1"
+  export PATH="${PATH}:$1"
 }
 
+# Add to PATH even if it doesn't exist
 force_add_to_path_start() {
   remove_from_path "$1"
-  export PATH="$1:$PATH"
+  export PATH="$1:${PATH}"
 }
 
 quiet_which() {
-# shellcheck disable=SC2230
-  which "$1" &>/dev/null
+  command -v "$1" >/dev/null
 }
 
-add_to_path_end "/sbin"
+add_to_path_start "/opt/homebrew/bin"
 add_to_path_start "/usr/local/bin"
-add_to_path_start "/usr/local/sbin"
-add_to_path_start "$HOME/Homebrew/bin"
-add_to_path_start "$HOME/Homebrew/sbin"
+add_to_path_end "${HOME}/.dotfiles/bin"
 
-export GOPATH="$HOME/go"
-add_to_path_end "$GOPATH/bin"
-export GOROOT=/usr/local/opt/go/libexec
-add_to_path_start "/usr/local/opt/go/libexec/bin"
-export GODEBUG=netdns=go
-
-add_to_path_end "$(brew --prefix mysql@5.7)/bin"
-add_to_path_start "$HOME/bin"
-
-# Run rbenv if it exists
-quiet_which rbenv && add_to_path_start "$(rbenv root)/shims"
-quiet_which rbenv && eval "$(rbenv init -)"
-
-quiet_which nodenv && eval "$(nodenv init -)"
+export GOPATH="${HOME}/.gopath" # Setup Go development
+add_to_path_end "${GOPATH}/bin"
 
 # Aliases
-alias mkdir="mkdir -vp"
+alias cp="cp -rv"
 alias df="df -H"
-alias rm="rm -iv"
-alias mv="mv -iv"
-alias cp="cp -irv"
 alias du="du -sh"
-alias make="nice make"
-alias less="less -FSXr"
+alias less="less -FXR"
+alias ls="ls -FA"
+alias ll="ls -l"
+alias mkdir="mkdir -vp"
+alias mv="mv -v"
+alias rm="rm -v"
 alias rsync="rsync --partial --progress --human-readable --compress"
-alias sha256="shasum -a 256"
 
-# Platform-specific stuff
-if quiet_which brew
-then
-  export HOMEBREW_PREFIX="$(brew --prefix)"
-  export HOMEBREW_REPOSITORY="$(brew --repo)"
-  export HOMEBREW_AUTO_UPDATE_SECS=3600
-  export HOMEBREW_BINTRAY_USER="$(git config bintray.username)"
+# Command-specific stuff
+if quiet_which brew; then
+  eval "$(brew shellenv)"
 
-  alias hbc='cd $HOMEBREW_REPOSITORY/Library/Taps/homebrew/homebrew-core'
-
-  # Output whether the dependencies for a Homebrew package are bottled.
-  brew_bottled_deps() {
-    for DEP in "$@"; do
-      echo "$DEP deps:"
-      brew deps "$DEP" | xargs brew info | grep stable
-      [ "$#" -ne 1 ] && echo
-    done
-  }
-
-  # Output the most popular unbottled Homebrew packages
-  brew_popular_unbottled() {
-    brew deps --all |
-      awk '{ gsub(":? ", "\n") } 1' |
-      sort |
-      uniq -c |
-      sort |
-      tail -n 500 |
-      awk '{print $2}' |
-      xargs brew info |
-      grep stable |
-      grep -v bottled
-  }
+  #export HOMEBREW_DEVELOPER=1
+  #export HOMEBREW_BOOTSNAP=1
+  export HOMEBREW_BUNDLE_INSTALL_CLEANUP=1
+  #export HOMEBREW_BUNDLE_DUMP_DESCRIBE=1
+  #export HOMEBREW_NO_ENV_HINTS=1
+  export HOMEBREW_AUTOREMOVE=1
+  export HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS=1
+  export HOMEBREW_CLEANUP_MAX_AGE_DAYS=5
+  #export HOMEBREW_SORBET_RUNTIME=1
+  #export HOMEBREW_RUBY3=1
 fi
 
-if quiet_which exa; then
-  alias ls="exa -Fg"
-  alias ll="exa -Fgl --time-style=long-iso --git"
-else
-  alias ls="ls -F"
-  alias ll="ls -l"
+# shellcheck disable=SC2016
+export GIT_PAGER='less -+$LESS -RX'
+
+if quiet_which bat; then
+  alias cat="bat"
+  export HOMEBREW_BAT=1
 fi
 
-# Platform-specific stuff
-if [ "$MACOS" ]
-then
-  export LSCOLORS=cxFxcxdxBxegedabagacHe
-  export CLICOLOR=1
+export CLICOLOR=1 # Configure environment
+export GREP_OPTIONS="--color=auto"
 
-  add_to_path_end "$HOMEBREW_PREFIX/opt/git/share/git-core/contrib/diff-highlight"
-  if quiet_which diff-highlight
-  then
-    # shellcheck disable=SC2016
-    export GIT_PAGER='diff-highlight | less -+$LESS -FRX'
-  else
-    # shellcheck disable=SC2016
-    export GIT_PAGER='less -+$LESS -FRX'
-  fi
-  add_to_path_end /Applications/Xcode.app/Contents/Developer/usr/bin
-  add_to_path_end /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+add_to_path_end "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
-  alias locate="mdfind -name"
-  alias cpwd="pwd | tr -d '\\n' | pbcopy"
-
-elif [ "$LINUX" ]
-then
-  quiet_which keychain && eval "$(keychain -q --eval --agents ssh id_rsa)"
-
-  alias su="/bin/su -"
-fi
-
-if quiet_which vim
-then
-  export EDITOR="vim"
-elif quiet_which vi
-then
-  export EDITOR="vi"
-fi
-
-# Save directory changes
-cd() {
-  builtin cd "$@" || return
-  pwd > "$HOME/.lastpwd"
-  ls
+# output what's listening on the supplied port
+on-port() {
+  sudo lsof -nP -i4TCP:"$1"
 }
 
-# Pretty-print JSON files
-json() {
-  [ -n "$1" ] || return
-  jsonlint "$1" | jq .
-}
-
-# Pretty-print Homebrew install receipts
-receipt() {
-  [ -n "$1" ] || return
-  json "$HOMEBREW_PREFIX/opt/$1/INSTALL_RECEIPT.json"
-}
+export EDITOR="vim"
 
 # Move files to the Trash folder
 trash() {
-  mv "$@" "$HOME/.Trash/"
+  mv "$@" "${HOME}/.Trash/"
 }
 
-# Look in ./bin but do it last to avoid weird `which` results.
-force_add_to_path_start "bin"
+# GitHub API shortcut
+github-api-curl() {
+  curl -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/$1" | jq .
+}
+
+# Clear entire screen buffer
+clearer() {
+  tput reset
+}

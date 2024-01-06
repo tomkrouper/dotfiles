@@ -1,50 +1,41 @@
-# load shared shell configuration
-source ~/.shprofile
+# shellcheck disable=SC2148
 
-# Enable completions
-autoload -U compinit && compinit
-
-if which brew &>/dev/null
-then
-  [ -w "$HOMEBREW_PREFIX/bin/brew" ] && \
-    [ ! -f "$HOMEBREW_PREFIX/share/zsh/site-functions/_brew" ] && \
-    mkdir -p "$HOMEBREW_PREFIX/share/zsh/site-functions" &>/dev/null && \
-    ln -s "$HOMEBREW_PREFIX/Library/Contributions/brew_zsh_completion.zsh" \
-          "$HOMEBREW_PREFIX/share/zsh/site-functions/_brew"
-  export FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH"
+if which brew &>/dev/null; then
+  eval "$(brew shellenv)"
 fi
 
-# Enable regex moving
-autoload -U zmv
+umask 022 # 077 would be more secure, but 022 is more useful.
+export HISTSIZE="100000" # Save more history
+export SAVEHIST="100000" # Save more history
 
-# Style ZSH output
-zstyle ':completion:*:descriptions' format '%U%B%F{red}%d%f%b%u'
-zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
+# shellcheck disable=SC2155
+[ -z "$USER" ] && export USER="$(whoami)" # Fix systems missing $USER
 
-# Case insensitive completion
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+# Count CPUs for Make jobs
+# shellcheck disable=SC2155
+export CPUCOUNT="$(sysctl -n hw.ncpu)"
 
-# Case insensitive globbing
-setopt no_case_glob
+if [ "$CPUCOUNT" -gt 1 ]; then
+  export MAKEFLAGS="-j$CPUCOUNT"
+  export BUNDLE_JOBS="$CPUCOUNT"
+fi
 
-# Expand parameters, commands and aritmatic in prompts
-setopt prompt_subst
+autoload -U compinit && compinit -u # Enable completions and allow insecure loading
 
-# Colorful prompt with Git and Subversion branch
-autoload -U colors && colors
+if [ -n "$HOMEBREW_PREFIX" ]; then
+  FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH"
+fi
+
+zstyle ':completion:*:descriptions' format '%U%B%F{red}%d%f%b%u' # Style ZSH output
+zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b' # Style ZSH output
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
+setopt no_case_glob # Case insensitive globbing
+setopt prompt_subst # Expand parameters, commands and arithmetic in prompts
+autoload -U colors && colors # Colorful prompt with Git and Subversion branch
 
 git_branch() {
   GIT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null) || return
   [ -n "$GIT_BRANCH" ] && echo "($GIT_BRANCH) "
-}
-
-svn_branch() {
-  [ -d .svn ] || return
-  SVN_INFO=$(svn info 2>/dev/null) || return
-  SVN_BRANCH=$(echo "$SVN_INFO" | grep URL: | grep -oe '\(trunk\|branches/[^/]\+\|tags/[^/]\+\)')
-  [ -n "$SVN_BRANCH" ] || return
-  # Display tags intentionally so we don't write to them by mistake
-  echo "(${SVN_BRANCH#branches/}) "
 }
 
 # more macOS/Bash-like word jumps

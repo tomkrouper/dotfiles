@@ -6,3 +6,6 @@ bundle/cache
 secrets
 rbenv/*/
 gnupg/tom.krouper@gmail.com.private.gpg-key
+Brewfile.lock.json
+/config/gh
+
