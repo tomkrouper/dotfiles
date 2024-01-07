@@ -77,20 +77,6 @@ set hlsearch
 " Set the commands to save in history default number is 20.
 set history=1000
 
-" Whitespace ------------------------------------------------------------ {{{
-
-if has("multi_byte")
-  set encoding=utf-8
-  "set listchars=tab:»·,trail:·
-  set listchars=tab:⇤–⇥,space:·,trail:·,precedes:⇠,extends:⇢,nbsp:×
-else
-  set listchars=tab:>-,trail:.
-endif
-set list
-
-" }}}
-
-
 " STATUS LINE ------------------------------------------------------------ {{{
 
 " Clear status line when vimrc is reloaded.
