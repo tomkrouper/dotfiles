@@ -22,7 +22,7 @@
 	attributesfile = ~/.gitattributes
 	# Don't prompt for commit messages for merge commits.
 	mergeoptions = --no-edit
-	pager = less -F -X
+	pager = less -F -X -R
 [help]
   # Autocorrect mistyped commands.
 	autocorrect = 1
@@ -38,6 +38,9 @@
 	upstream = !git config --get branch.$(git current-branch).remote \
 	         || echo origin
 	# Fetch all branches and rebase the current branch against
+	# upstream/main.
+	rebase-against-main = !git fetch --all \
+	                      && git rebase $(git upstream)/main
 	# upstream/master.
 	rebase-against-master = !git fetch --all \
 	                      && git rebase $(git upstream)/master
@@ -45,12 +48,8 @@
 	# name for the remote branch.
 	upstream-current-branch = !git push --set-upstream origin \
 	                         $(git current-branch)
-	# Create a pull request on GitHub using the `hub` command.
-	pull-request = !hub pull-request -o
-	# Upstream the current branch to origin and create a pull request
-	# on GitHub.
-	upstream-and-pull-request = !git upstream-current-branch \
-	                          && git pull-request
+	# Create a pull request on GitHub using the `gh` command.
+	pull-request = !gh pr create
 	# Get the current diff but show differences between characters
 	# instead of just the differences between lines.
 	word-diff = diff --word-diff
@@ -64,15 +63,16 @@
 	# and update its date.
 	fix-up-previous-commit = !git commit --all --amend \
 	                              --reuse-message=HEAD --date=\"$(date)\" #"
+	# Checkout the main branch and update it.
+	pull-main = !git checkout main && git pull
 	# Checkout the master branch and update it.
 	pull-master = !git checkout master && git pull
 	# Hard reset branch to the upstream version.
 	hard-reset = !git reset --hard $(git upstream)/$(git current-branch)
-	# Delete all non-master branches
-	delete-merged = !git branch --merged | grep -v 'master' | grep -v '*' | xargs -n 1 git branch -D
+	# Delete all non-master/main branches
+	delete-merged = !git branch --merged |grep -v 'main' | grep -v 'master' | grep -v '*' | xargs -n 1 git branch -D
 
 	## Shortened 'New' Commands
-	pr = !git upstream-and-pull-request
 	up = !git upstream-current-branch
 	fa = !git fetch --all
 	u = !git push-and-set-upstream
@@ -84,6 +84,7 @@
 	## Shortened Existing Commands
 	p = pull
 	s = status --short --branch
+  pf = push --force-with-lease
 [diff]
 	# Use the macOS graphical three-way merge tool for graphical diffs.
 	tool = opendiff
@@ -133,8 +134,6 @@
 [credential]
 	# Use macOS Keychain to store HTTP passwords.
 	helper = osxkeychain
-[hub]
-	protocol = https
 # Settings for Git LFS
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -144,6 +143,3 @@
 [commit]
 	# Show the diff as a comment in the commit message template.
 	verbose = true
-[user]
-	name = Tom Krouper
-	email = tomkrouper@github.com
