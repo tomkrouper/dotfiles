@@ -11,8 +11,13 @@ filetype plugin on
 filetype indent on
 
 " Turn syntax highlighting on.
-syntax on
-:color slate
+let g:solarized_termcolors=256
+let g:solarized_visibility="low"
+set list listchars=trail:‿,eol:¶
+
+syntax enable
+set background=dark
+colorscheme solarized
 
 " Add numbers to each line on the left-hand side.
 set number
@@ -78,13 +83,3 @@ set hlsearch
 set history=1000
 
 let g:airline_powerline_fonts = 1
-
-" vim-plug
-call plug#begin()
-" Make sure you use single quotes
-Plug 'dense-analysis/ale'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-
-call plug#end()

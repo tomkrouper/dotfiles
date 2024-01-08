@@ -11,6 +11,15 @@ brew bundle install --global
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/themes/powerlevel10k
 /usr/local/opt/fzf/install --all
-mkdir -p ~/.vim/{autoload,backup,colors,plugged}
-curl -o "$HOME"/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# Use VIMs built in packages
+git clone https://github.com/vim-airline/vim-airline ~/.vim/pack/plugins/start/vim-airline
+vim -u NONE -c "helptags $HOME/.vim/pack/plugins/start/vim-airline/doc" -c q
+git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/pack/plugins/start/vim-airline-themes
+vim -u NONE -c "helptags $HOME/.vim/pack/plugins/start/vim-airline-themes/doc" -c q
+git clone --depth 1 https://github.com/dense-analysis/ale.git ~/.vim/pack/plugins/start/ale
+vim -u NONE -c "helptags $HOME/.vim/pack/plugins/start/ale/doc" -c q
+git clone https://github.com/altercation/vim-colors-solarized.git ~/.vim/pack/plugins/start/vim-colors-solarized
+vim -u NONE -c "helptags $HOME/.vim/pack/plugins/start/vim-colors-solarized/doc" -c q
+
 ./extract-onepassword-secrets
