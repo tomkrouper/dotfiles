@@ -9,8 +9,8 @@ brew "fzf"
 brew "gh"
 brew "git"
 brew "gnu-sed"
+brew "gnupg"
 brew "go"
-brew "gpg"
 brew "jq"
 brew "mas"
 brew "moreutils"
@@ -45,6 +45,7 @@ mas "Paprika Recipe Manager 3", id: 1303222628
 mas "Skitch", id: 425955336
 mas "Slack", id: 803453959
 mas "Under My Roof", id: 1524335878
+mas "Xcode", id: 497799835
 vscode "foxundermoon.shell-format"
 vscode "Shopify.ruby-lsp"
 vscode "timonwong.shellcheck"
