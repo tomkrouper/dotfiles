@@ -1,0 +1,22 @@
+# $HOME/.functions must come before this file
+
+if quiet_which bat; then
+  alias cat="bat --paging=never"
+  export HOMEBREW_BAT=1
+fi
+if quiet_which eza; then
+	alias ls="eza --group-directories-first --color=auto"
+	alias ll="eza -lahF --group-directories-first --color=auto --git --icons"
+else
+	alias ls="ls -FA"
+	alias ll="ls -lAF"
+fi
+quet_which kubectl && alias k="kubectl"
+alias cp="cp -rv"
+alias df="df -H"
+alias du="du -sh"
+alias less="less -FXR"
+alias mkdir="mkdir -vp"
+alias mv="mv -v"
+alias rm="rm -v"
+alias rsync="rsync --partial --progress --human-readable --compress"

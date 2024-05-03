@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+{{- if eq .chezmoi.os "darwin" }}
+{{ $brews := list
+    "bat"
+    "coreutils"
+    "eza"
+    "findutils"
+    "fzf"
+    "gh"
+    "git"
+    "gnu-sed"
+    "go"
+    "gpg"
+    "jq"
+    "moreutils"
+    "pinentry"
+    "pinentry-mac"
+    "ruby"
+    "shellcheck"
+    "shfmt"
+    "the_silver_searcher"
+    "tmux"
+    "todo-txt"
+    "tree"
+    "vim"
+    "zsh-completions"
+-}}
+
+{{ $casks := list
+    "1password"
+    "1password-cli"
+    "font-sauce-code-pro-nerd-font"
+    "google-chrome"
+    "iterm2"
+    "visual-studio-code"
+-}}
+
+
+{{ if .personal -}}
+{{ $brews = concat $brews (list
+    "ffmpeg"
+    "mas"
+    "yt-dlp") -}}
+{{ $casks = concat $casks (list
+    "alfred"
+    "discord"
+    "firefox"
+    "microsoft-edge"
+    "obsidian"
+    "the-unarchiver"
+    "vlc"
+    "zoom") -}}
+{{ end -}}
+
+brew bundle --no-lock --file=/dev/stdin <<EOF
+{{ range ($brews | sortAlpha | uniq) -}}
+brew "{{ . }}"
+{{ end -}}
+{{ range ($casks | sortAlpha | uniq) -}}
+cask "{{ . }}"
+{{ end -}}
+{{ if .personal -}}
+mas "1Password for Safari", id: 1569813296
+mas "Brother P-touch Editor", id: 1453365242
+mas "Clocker", id: 1056643111
+mas "HP Smart", id: 1474276998
+mas "Kindle", id: 302584613
+mas "Magnet", id: 441258766
+mas "Paprika Recipe Manager 3", id: 1303222628
+mas "Skitch", id: 425955336
+mas "Slack", id: 803453959
+mas "Under My Roof", id: 1524335878
+mas "iStat Menus", id: 1319778037
+{{ end -}}
+EOF
+
+{{- end }}

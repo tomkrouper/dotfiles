@@ -1,0 +1,61 @@
+# $HOME/.functions must be sourced before this file
+
+# Set up Homebrew for the current shell
+quiet_which brew && eval "$(brew shellenv)"
+
+# Colourful manpages
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# Set to avoid `env` output from changing console colour
+export LESS_TERMEND=$'\E[0m'
+
+add_to_path_start "/opt/homebrew/bin"
+add_to_path_start "/usr/local/bin"
+add_to_path_end "${HOMEBREW_PREFIX}/opt/mysql@8.0/bin"
+add_to_path_end "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+add_to_path_end "${HOME}/bin"
+
+export PAGER="less -FSXR"
+export CLICOLOR=1 # Configure environment
+export GREP_OPTIONS="--color=auto"
+export EDITOR="vim"
+export WORDCHARS=""
+
+[ -z "$USER" ] && export USER="$(whoami)" # Fix systems missing $USER
+
+# Count CPUs for Make jobs
+# shellcheck disable=SC2155
+export CPUCOUNT="$(sysctl -n hw.ncpu)"
+
+if [ "$CPUCOUNT" -gt 1 ]; then
+  export MAKEFLAGS="-j$CPUCOUNT"
+  export BUNDLE_JOBS="$CPUCOUNT"
+fi
+
+# oh-my-zsh
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+export HYPHEN_INSENSITIVE="true"
+export DISABLE_MAGIC_FUNCTIONS="true"
+export HIST_STAMPS="yyyy-mm-dd"
+zstyle ':omz:update' mode disabled # chezmoi handles this elsewhere
+zstyle ':completion:*:descriptions' format '%U%B%F{red}%d%f%b%u' # Style ZSH output
+zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b' # Style ZSH output
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
+setopt no_case_glob # Case insensitive globbing
+setopt prompt_subst # Expand parameters, commands and arithmetic in prompts
+
+# History
+export HISTFILE=~/.zsh_history # History file
+export HISTSIZE="100000" # Save more history
+export SAVEHIST="100000" # Save more history
+setopt hist_find_no_dups # Don't show duplicate history entires
+setopt hist_reduce_blanks # Remove unnecessary blanks from history
+setopt share_history # Share history between instances
+setopt no_hup # Don't hang up background jobs

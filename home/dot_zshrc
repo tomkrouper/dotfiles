@@ -1,0 +1,65 @@
+# shellcheck disable=SC1090,SC1091,SC2034,SC2086,SC2148,SC2296
+
+# Order matters here.
+for F in .functions .aliases .exports; do
+  [ -f "$HOME/$F" ] && source "$HOME/$F"
+done
+
+# oh-my-zsh setup
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+HYPHEN_INSENSITIVE="true"
+zstyle ':omz:update' mode disabled # due to chezmoi
+DISABLE_MAGIC_FUNCTIONS="true"
+HIST_STAMPS="yyyy-mm-dd"
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
+#
+
+# powerlevel10k
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# History
+export HISTFILE=~/.zsh_history # History file
+setopt hist_find_no_dups # Don't show duplicate history entires
+setopt hist_reduce_blanks # Remove unnecessary blanks from history
+setopt share_history # Share history between instances
+setopt no_hup # Don't hang up background jobs
+export HISTSIZE="100000" # Save more history
+export SAVEHIST="100000" # Save more history
+
+bindkey '\e[3~' delete-char # fix delete key on macOS
+
+ZSH_AUTOSUGGESTIONS="$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" # enable autosuggestions
+[ -f "$ZSH_AUTOSUGGESTIONS" ] && source "$ZSH_AUTOSUGGESTIONS"
+
+umask 022 # 077 would be more secure, but 022 is more useful.
+
+autoload -U compinit && compinit -u # Enable completions and allow insecure loading
+
+if [ -n "$HOMEBREW_PREFIX" ]; then
+  FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH"
+fi
+
+zstyle ':completion:*:descriptions' format '%U%B%F{red}%d%f%b%u' # Style ZSH output
+zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b' # Style ZSH output
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
+setopt no_case_glob # Case insensitive globbing
+setopt prompt_subst # Expand parameters, commands and arithmetic in prompts
+
+# Shopify
+export SKIP_CM_IAP_USING_COMMENTS=1
+
+[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
+[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
+[ -f $HOME/src/github.com/Shopify/db-core-mysql/scripts/knife-alias.sh ] && \
+  source $HOME/src/github.com/Shopify/db-core-mysql/scripts/knife-alias.sh
+
+# cloudplatform: add Shopify clusters to your local kubernetes config
+export KUBECONFIG=${KUBECONFIG:+$KUBECONFIG:}/Users/tom_krouper/.kube/config:/Users/tom_krouper/.kube/config.shopify.cloudplatform

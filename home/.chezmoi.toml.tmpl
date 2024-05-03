@@ -1,0 +1,8 @@
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $personal:= promptBoolOnce . "personal" "Assign 'true' if personal laptop, otherwise 'false'" -}}
+{{- $onepasswordAccount := promptStringOnce . "onepasswordAccount" "onepasswordAccount address" -}}
+
+[data]
+    email = {{ $email | quote }}
+    personal = {{ $personal }}
+    onepasswordAccount = {{ $onepasswordAccount | quote }}
