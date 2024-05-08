@@ -1,7 +1,7 @@
 # shellcheck disable=SC1090,SC1091,SC2034,SC2086,SC2148,SC2296
 
 # Order matters here.
-for F in .functions .aliases .exports; do
+for F in .functions .exports; do
   [ -f "$HOME/$F" ] && source "$HOME/$F"
 done
 
@@ -53,13 +53,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive com
 setopt no_case_glob # Case insensitive globbing
 setopt prompt_subst # Expand parameters, commands and arithmetic in prompts
 
-# Shopify
-export SKIP_CM_IAP_USING_COMMENTS=1
+[ -f "$HOME/.aliases" ] && source "$HOME/.aliases"
 
-[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
-[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
-[ -f $HOME/src/github.com/Shopify/db-core-mysql/scripts/knife-alias.sh ] && \
-  source $HOME/src/github.com/Shopify/db-core-mysql/scripts/knife-alias.sh
-
-# cloudplatform: add Shopify clusters to your local kubernetes config
-export KUBECONFIG=${KUBECONFIG:+$KUBECONFIG:}/Users/tom_krouper/.kube/config:/Users/tom_krouper/.kube/config.shopify.cloudplatform
+{{ onepasswordRead "op://employee/work-zshrc/notesPlain" .onepasswordAccount | trim }}
