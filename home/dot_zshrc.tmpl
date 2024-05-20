@@ -53,6 +53,11 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive com
 setopt no_case_glob # Case insensitive globbing
 setopt prompt_subst # Expand parameters, commands and arithmetic in prompts
 
-[ -f "$HOME/.aliases" ] && source "$HOME/.aliases"
+[ -f "$HOME"/.aliases ] && source "$HOME"/.aliases
+{{ if .personal -}}
+[ -f "$HOME"/.iterm2_shell_integration.zsh ] && source "$HOME"/.iterm2_shell_integration.zsh
+{{ end -}}
+
+source <(fzf --zsh)
 
 {{ onepasswordRead "op://employee/work-zshrc/notesPlain" .onepasswordAccount | trim }}
