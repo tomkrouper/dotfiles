@@ -26,7 +26,7 @@ export CLICOLOR=1 # Configure environment
 export GREP_OPTIONS="--color=auto"
 export EDITOR="vim"
 export WORDCHARS=""
-export FZF_DEFAULT_OPTS='--height 25% --layout=reverse --border'
+export FZF_DEFAULT_OPTS='--height 30% --border'
 
 [ -z "$USER" ] && export USER="$(whoami)" # Fix systems missing $USER
 

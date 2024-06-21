@@ -99,6 +99,10 @@ on-port() {
   sudo lsof -nP -i4TCP:"$1"
 }
 
+badge() {
+  printf "\e]1337;SetBadgeFormat=%s\a" $(echo -n "$@" | base64)
+}
+
 # Move files to the Trash folder
 trash() {
   mv "$@" "${HOME}/.Trash/"

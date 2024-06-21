@@ -5,7 +5,7 @@ if quiet_which bat; then
   export HOMEBREW_BAT=1
 fi
 if quiet_which eza; then
-	alias ls="eza --group-directories-first --color=auto"
+	alias ls="eza --group-directories-first --color=auto --git --icons"
 	alias ll="eza -lahF --group-directories-first --color=auto --git --icons"
 else
 	alias ls="ls -FA"
