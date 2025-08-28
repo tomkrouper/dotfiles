@@ -60,4 +60,6 @@ setopt prompt_subst # Expand parameters, commands and arithmetic in prompts
 
 source <(fzf --zsh)
 
+{{ if not .personal -}}
 {{ onepasswordRead "op://employee/work-zshrc/notesPlain" .onepasswordAccount | trim }}
+{{ end -}}
